@@ -1,41 +1,64 @@
-
-import socket
+# chat_client.py
+import requests
+import time
 import os
 
-# 1. Khởi tạo socket
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# url của mình
+MY_SERVER_URL = "http://127.0.0.1:5000"
 
-# Cấu hình địa chỉ và cổng của máy B
-# Thay đổi 'YOUR_PUBLIC_IP' bằng IP công cộng của máy B
-HOST = 'YOUR_PUBLIC_IP'
-PORT = 65432
+# url của ngta
+PARTNER_NGROK_URL = "https://thay-dia-chi-ngrok-cua-ban-chat-vao-day.ngrok-free.app"
 
-# Tên file cần gửi
-FILE_TO_SEND = "file_to_send.dat"
 
-try:
-    # 2. Kết nối tới máy B
-    client.connect((HOST, PORT))
-    print("Máy A đã kết nối thành công tới máy B.")
+def send_message(message_text):
+    """Gửi tin nhắn lên server của chính mình."""
+    try:
 
-    # 3. Mở và gửi file
-    print(f"Bắt đầu gửi file '{FILE_TO_SEND}'...")
-    with open(FILE_TO_SEND, "rb") as f:
-        while True:
-            # Đọc từng phần dữ liệu từ file
-            data = f.read(4096)
-            if not data:
-                break
-            client.sendall(data) # Gửi tất cả dữ liệu đã đọc
+        response = requests.post(f"{MY_SERVER_URL}/send", json={"message": message_text})
+        if response.status_code == 200:
+            print(f"Bạn: {message_text}")
+        else:
+            print(f"[Lỗi] Không thể gửi tin nhắn. Mã lỗi: {response.status_code}")
+    except requests.exceptions.ConnectionError:
+        print("[Lỗi] Không thể kết nối tới server của chính mình. Bạn đã chạy file chat_server.py chưa?")
 
-    print("Đã gửi file thành công!")
+def receive_message():
+    """Lấy tin nhắn từ server của đối tác."""
+    try:
 
-except FileNotFoundError:
-    print(f"Lỗi: Không tìm thấy file '{FILE_TO_SEND}' để gửi.")
-except socket.error as e:
-    print(f"Lỗi: {e}")
+        response = requests.get(f"{PARTNER_NGROK_URL}/get_message")
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("message", "Không nhận được tin nhắn.")
+        else:
+            return f"[Lỗi] Không thể lấy tin nhắn. Mã lỗi: {response.status_code}"
+    except requests.exceptions.RequestException as e:
+        return f"[Lỗi] Không thể kết nối tới server của đối tác. Hãy kiểm tra lại URL ngrok."
 
-finally:
-    # Đóng kết nối
-    client.close()
-    print("Đã đóng kết nối.")
+def main():
+    """Vòng lặp chính của chương trình chat."""
+    partner_last_message = ""
+    while True:
+
+        my_new_message = input("Nhập tin nhắn của bạn và nhấn Enter (gõ 'exit' để thoát): ")
+        if my_new_message.lower() == 'exit':
+            break
+        send_message(my_new_message)
+        
+
+        print("...")
+        time.sleep(2) 
+        
+        current_partner_message = receive_message()
+
+        if current_partner_message != partner_last_message:
+            os.system('cls' if os.name == 'nt' else 'clear') 
+            print("--- CUỘC TRÒ CHUYỆN ---")
+            print(f"Đối tác: {current_partner_message}")
+            partner_last_message = current_partner_message
+        
+        print("------------------------")
+
+# :)
+if __name__ == "__main__":
+    main()
