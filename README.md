@@ -4,7 +4,7 @@ Multi-device data transmission network, connecting devices together, highly secu
 # Index
 x
 
-# How to use?
+# How to use? (if used with ngrok)
 
 Suppose there is computer A and computer B.
 
