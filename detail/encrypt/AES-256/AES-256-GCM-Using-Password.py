@@ -94,7 +94,7 @@ if __name__ == '__main__':
     while True:
         choice = input("\nBạn muốn (1) Mã hóa hay (2) Giải mã? (Nhấn Enter để thoát): ")
         if choice == '1':
-            password = input("Nhập mật khẩu để MÃ HÓA (Lưu ý mật khẩu nhập vào sẽ bị che để đảm bảo bảo mật): ")
+            password = input("Nhập mật khẩu để MÃ HÓA : ")
             plaintext = input("Nhập dữ liệu bạn muốn mã hóa: ")
             if not password or not plaintext:
                 print("Mật khẩu và dữ liệu không được để trống!")
@@ -108,7 +108,7 @@ if __name__ == '__main__':
                 print("---------------------------\n")
 
         elif choice == '2':
-            password = input("Nhập mật khẩu để GIẢI MÃ (Lưu ý mật khẩu nhập vào sẽ bị che để đảm bảo bảo mật): ")
+            password = input("Nhập mật khẩu để GIẢI MÃ : ")
             encrypted_input = input("Dán toàn bộ dữ liệu đã mã hóa vào đây: ")
             if not password or not encrypted_input:
                 print("Mật khẩu và dữ liệu đã mã hóa không được để trống!")
