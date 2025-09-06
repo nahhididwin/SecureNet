@@ -1,3 +1,2 @@
 # SNet (SecureNet)
-Multi-device data transmission network, connecting devices together with a common server, highly secure, fully customizable.
-
+Multi-device data transmission network, connecting devices together, highly secure, fully customizable.
